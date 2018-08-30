@@ -4,7 +4,7 @@
 # Licensed under the terms of the MIT License
 # (see spyder/__init__.py for details)
 
-from gettext_helpers import do_compile
+from gettext_helpers.gettext_helpers import do_compile
 
 if __name__ == "__main__":
     do_compile("spyder")
