@@ -25,7 +25,9 @@
 # -----------------------------------------------------------------------------
 
 
+# Local imports
 from gettext_helpers.gettext_helpers import do_compile
+
 
 if __name__ == "__main__":
     do_compile("spyder")

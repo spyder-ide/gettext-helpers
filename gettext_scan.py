@@ -25,7 +25,9 @@
 # -----------------------------------------------------------------------------
 
 
-from gettext_helpers.gettext_helpers import do_rescan, do_rescan_files
+# Local imports
+from gettext_helpers.gettext_helpers import do_rescan
+
 
 if __name__ == "__main__":
     do_rescan("spyder")
