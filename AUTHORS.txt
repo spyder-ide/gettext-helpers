@@ -4,3 +4,7 @@ The Gettext-Helpers Contributors are composed of:
 * Carlos Cordoba <ccordoba12@gmail.com> (Current maintainer)
 * All other developers that have committed to the gettext-helpers repository:
   <https://github.com/spyder-ide/gettext-helpers/graphs/contributors
+
+For more information about the authorship history of Gettext-Helpers,
+see the NOTICE.txt file in the root of the gettext-helpers respository, or at:
+<https://github.com/spyder-ide/gettext-helpers/blob/master/NOTICE.txt>
