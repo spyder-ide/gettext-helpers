@@ -1,0 +1,6 @@
+The Gettext-Helpers Contributors are composed of:
+
+* Pierre Raybaut <pierre.raybaut@gmail.com> (Original creator)
+* Carlos Cordoba <ccordoba12@gmail.com> (Current maintainer)
+* All other developers that have committed to the gettext-helpers repository:
+  <https://github.com/spyder-ide/gettext-helpers/graphs/contributors
