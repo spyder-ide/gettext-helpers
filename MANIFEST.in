@@ -1,0 +1,8 @@
+recursive-include gettext_helpers *.py *.md *.rst *.png *.txt *.svg
+include AUTHORS.txt
+include gettext_compile.py
+include gettext_scan.py
+include LICENSE.txt
+include MANIFEST.in
+include NOTICE.txt
+include README.md
