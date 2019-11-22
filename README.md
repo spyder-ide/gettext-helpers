@@ -8,7 +8,6 @@ Licensed under the terms of the [GNU General Public License Version 3](
 https://www.gnu.org/licenses/gpl.html).
 
 
-
 ## Overview
 
 Gettext-Helpers is originally based on a module and set of scripts from the
@@ -25,23 +24,49 @@ Finally, it was spun out into its own project for modularity and flexibility.
 However, its primary purpose remains to build the Spyder translation files.
 
 
-
 ## Installation
 
 Currently, you can just ``git clone`` the repository and call the scripts and
 functions locally on your project of choice, though you may want to put it on
 your ``PATH``/``PYTHONPATH`` first.
 
-A PyPI release may be made in the near future, if there is any interest.
+You will also need to install the Firefox selenium driver!
+
+### With pip
+
+```bash
+pip install selenium polib
+python setup.py develop
+```
+
+### With conda
+```bash
+conda install selenium polib -c spyder-ide
+python setup.py develop
+```
 
 
+## Usage
 
-## Dependencies
+Go to the root of the repository you want to update:
 
-Just **Python** 2.7 or 3.4+ to run the package (untested on earlier versions).
-No other external dependencies needed.
+### To scan files and generate a *.pot file:
 
+```bash
+spyder-gettext scan <PATH_TO_ROOT_MODULE>
+```
 
+### To create or update new language stubs:
+
+```bash
+spyder-gettext scan <PATH_TO_ROOT_MODULE> --target-lang es
+```
+
+### To translate untranslated strings:
+
+```bash
+spyder-gettext translate <PATH_TO_ROOT_MODULE> --target-lang es
+```
 
 ## Contributing
 
@@ -50,7 +75,6 @@ Please read our
 [contributing instructions](
 https://github.com/spyder-ide/gettext-helpers/blob/master/CONTRIBUTING.md)
 to get started!
-
 
 
 ## Credits
@@ -66,7 +90,6 @@ All current files are released under the GNU GPL version 3,
 although they may be based on or near-identical to MIT (Expat) licensed
 versions found elsewhere in the Spyder project, and thus can be used under
 those permissive terms as well if so desired.
-
 
 
 ## About the Spyder IDE

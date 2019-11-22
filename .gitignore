@@ -32,3 +32,5 @@ spyder_crash.log
 *.tmp
 *.temp
 *.bak
+
+geckodriver.log

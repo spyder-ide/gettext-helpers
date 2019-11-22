@@ -26,5 +26,3 @@ See LICENSE.txt in the gettext-helpers repository root for the full text.
 See `NOTICE.txt <https://github.com/spyder-ide/gettext-helpers/blob/master/NOTICE.txt>`__
 in the same location for more detailed legal history.
 """
-
-from ._version import __version__

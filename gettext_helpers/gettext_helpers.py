@@ -26,7 +26,7 @@
 
 
 # Future imports for Python 2
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 
 # Standard library imports
 import sys
@@ -34,124 +34,107 @@ import os
 import os.path as osp
 import subprocess
 
-
-# Find pygettext.py source on a windows install
-if os.name == 'nt':
-    pygettext = ['python',
-                 osp.join(sys.prefix, "Tools", "i18n", "pygettext.py")]
-    msgfmt = ['python', osp.join(sys.prefix, "Tools", "i18n", "msgfmt.py")]
-else:
-    pygettext = ['pygettext']
-    msgfmt = ['msgfmt']
+# Adjust bundled executables (See: vendor)
+_ext = '.exe' if os.name == 'nt' else ''
+pygettext = ['pygettext' + _ext]
+msgfmt = ['msgfmt' + _ext]
 
 
-def get_files(modname):
-    if not osp.isdir(modname):
+def get_files(path, modname=None):
+    """"""
+    if modname is None:
+        modname = osp.basename(path)
+
+    if not osp.isdir(path):
         return [modname]
 
     files = []
-    for dirname, _dirnames, filenames in os.walk(modname):
+    for dirname, _dirnames, filenames in os.walk(path):
         files += [osp.join(dirname, f)
                   for f in filenames
                   if f.endswith(".py") or f.endswith(".pyw")]
-    for dirname, _dirnames, filenames in os.walk("tests"):
-        files += [osp.join(dirname, f)
-                  for f in filenames
-                  if f.endswith(".py") or f.endswith(".pyw")]
+
+    # for dirname, _dirnames, filenames in os.walk("tests"):
+    #     files += [osp.join(dirname, f)
+    #               for f in filenames
+    #               if f.endswith(".py") or f.endswith(".pyw")]
     return files
 
 
-def get_lang(modname):
-    localedir = osp.join(modname, "locale")
+def get_lang(path):
+    """"""
+    dirnames = []
+    localedir = osp.join(path, "locale")
     for _dirname, dirnames, _filenames in os.walk(localedir):
         break  # We just want the list of first level directories
     return dirnames
 
 
-def do_rescan(modname):
-    files = get_files(modname)
-    dirname = modname
-    do_rescan_files(files, modname, dirname)
+def do_rescan(path, languages=None):
+    """"""
+    files = get_files(path)
+    do_rescan_files(files, path, languages=languages)
 
 
-def do_rescan_files(files, modname, dirname):
-    localedir = osp.join(dirname, "locale")
+def do_rescan_files(files, path, modname=None, languages=None):
+    """"""
+    localedir = osp.join(path, "locale")
+
+    if not os.path.isdir(localedir):
+        os.makedirs(localedir)
+
+    if modname is None:
+        modname = osp.basename(path)
+
     potfile = modname + ".pot"
     subprocess.call(pygettext
-                    + ["-o", potfile,  # Nom du fichier pot
+                    + ["-o", potfile,  # Name of .pot file
                        # "-D",   # Extract docstrings
-                       "-p", localedir]  # Dest
+                       "-p", localedir]  # Destination
                     + files)
+    print('Updating pot file: "{}"'.format(potfile))
 
-    for lang in get_lang(dirname):
-        pofilepath = osp.join(localedir, lang, "LC_MESSAGES", modname+".po")
+    if languages is None:
+        languages = get_lang(path)
+
+    if languages is []:
+        return
+
+    for lang in languages:
+        pofilepath = osp.join(localedir, lang, "LC_MESSAGES", modname + ".po")
         potfilepath = osp.join(localedir, potfile)
         print("Updating...", pofilepath)
 
         if not osp.exists(osp.join(localedir, lang, "LC_MESSAGES")):
-            os.mkdir(osp.join(localedir, lang, "LC_MESSAGES"))
+            os.makedirs(osp.join(localedir, lang, "LC_MESSAGES"))
+
         if not osp.exists(pofilepath):
-            outf = open(pofilepath, "w")
-            outf.write("# -*- coding: utf-8 -*-\n")
-            data = open(potfilepath).read()
-            data = data.replace("charset=CHARSET", "charset=utf-8")
-            data = data.replace("Content-Transfer-Encoding: ENCODING",
-                                "Content-Transfer-Encoding: utf-8")
-            outf.write(data)
+            with open(pofilepath, "r") as fh2:
+                data = fh2.read()
+
+            with open(pofilepath, "w") as fh:
+                fh.write("# -*- coding: utf-8 -*-\n")
+                data = data.replace("charset=CHARSET", "charset=utf-8")
+                data = data.replace("Content-Transfer-Encoding: ENCODING",
+                                    "Content-Transfer-Encoding: utf-8")
+                fh.write(data)
         else:
             print("Merge...")
             subprocess.call(["msgmerge", "-o",
                              pofilepath, pofilepath, potfilepath])
 
 
-def do_compile(modname, dirname=None):
-    if dirname is None:
-        dirname = modname
-    localedir = osp.join(dirname, "locale")
-    for lang in get_lang(dirname):
+def do_compile(path, modname=None):
+    """"""
+    if modname is None:
+        modname = osp.dirname(path)
+
+    localedir = osp.join(path, "locale")
+    for lang in get_lang(path):
         pofilepath = osp.join(localedir, lang, "LC_MESSAGES", modname + ".po")
         mofilepath = osp.join(localedir, lang, "LC_MESSAGES", modname + ".mo")
         cmd = msgfmt + ['-o', mofilepath, pofilepath]
-        subprocess.call(cmd)
-
-
-def main(modname):
-    if len(sys.argv) < 2:
-        cmd = "help"
-    else:
-        cmd = sys.argv[1]
-    # lang = get_lang(modname)
-
-    if cmd == "help_gettext":
-        subprocess.call(pygettext + ["--help"])
-    elif cmd == "help_msgfmt":
-        subprocess.call(msgfmt + ["--help"])
-    elif cmd == "scan":
-        print("Updating pot files...")
-        do_rescan(modname)
-    elif cmd == "compile":
-        print("Builtin .mo files...")
-        do_compile(modname)
-    else:
-        help_text = (
-            """
-            Gettxt-Helpers
-
-            Available commands:
-
-                help : This message
-                help_gettext : pygettext --help
-                help_msgfmt : msgfmt --help
-                scan : Rescan .py files and update existing .po files
-                compile : Recompile .po files
-
-                Pour fonctionner ce programme doit être lancé depuis
-                la racine du module
-                Traductions disponibles:
-
-            """
-            )
-
-        print(help_text)
-        for dir_name in get_lang(modname):
-            print(dir_name)
+        try:
+            subprocess.call(cmd)
+        except Exception as e:
+            print(e)

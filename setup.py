@@ -37,7 +37,6 @@ Carlos Cordoba and others, with additional improvements added during that time.
 Finally, it was spun out into its own project for modularity and flexibility.
 """
 
-
 # Standard library imports
 import ast
 import os
@@ -45,11 +44,12 @@ import os
 # Third party imports
 from setuptools import find_packages, setup
 
+# Constants
 HERE = os.path.abspath(os.path.dirname(__file__))
 DOCLINES = __doc__.split('\n')
 
 
-def get_version(module='spyder_kernels'):
+def get_version(module='gettext_helpers'):
     """Get version."""
     with open(os.path.join(HERE, module, '_version.py'), 'r') as f:
         data = f.read()
@@ -69,11 +69,19 @@ setup(
     url='https://github.com/spyder-ide/gettext-helpers',
     license='GNU General Public License Version 3 or later',
     author='Spyder Development Team',
-    author_email="spyderlib@googlegroups.com",
+    author_email="admin@spyder-ide.org",
     description="Helper functions to manage gettext translations",
     long_description="\n".join(DOCLINES[4:]),
     packages=find_packages(),
     include_package_data=True,
+    entry_points={
+        'console_scripts': [
+            'spyder-gettext = gettext_helpers.main:main',
+            'pygettext = gettext_helpers.vendor.pygettext:main',
+            'msgfmt = gettext_helpers.vendor.msgfmt:main',
+        ],
+    },
+    requirements=['polib', 'selenium'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
