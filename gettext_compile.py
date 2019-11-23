@@ -26,8 +26,8 @@
 
 
 # Local imports
-from gettext_helpers.gettext_helpers import do_compile
+from gettext_helpers.utils import compile_path
 
 
-if __name__ == "__main__":
-    do_compile("spyder")
+if __name__ == '__main__':
+    compile_path('spyder')

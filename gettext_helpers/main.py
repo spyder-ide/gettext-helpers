@@ -30,41 +30,49 @@ import os
 import sys
 
 # Local imports
-from gettext_helpers.constants import LANG_CODES
-from gettext_helpers.gettext_helpers import do_compile, do_rescan
-from gettext_helpers.translate import translate
+from .constants import LANG_CODES
+from .translate import translate_path
+from .utils import compile_path, scan_path
 
 
 def main():
-    """"""
+    """Main entry point."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "command",
+        'command',
         type=str,
         choices=['scan', 'compile', 'translate'],
-        help="command to run!",
+        help='Command to run!',
     )
     parser.add_argument(
-        "path",
+        'path',
         type=str,
-        help="module path",
+        default=None,
+        help='Path to main repository root module',
     )
     parser.add_argument(
-        "-sl",
-        "--source-lang",
+        '-m',
+        '--module',
+        type=str,
+        default=None,
+        help='Module name to use for *.pot, *.po and *.mo files',
+    )
+    parser.add_argument(
+        '-sl',
+        '--source-lang',
         type=str,
         default='en',
-        help="source language",
+        help='Source language code',
     )
     parser.add_argument(
-        "-tl",
-        "--target-lang",
+        '-tl',
+        '--target-lang',
         type=str,
-        help="target language",
+        help='Target language code',
         default=None
     )
-    args = parser.parse_args()
     sys.stdout.write('\n')
+    args = parser.parse_args()
 
     # Check language is correct
     if args.target_lang and args.target_lang[:2].lower() not in LANG_CODES:
@@ -88,13 +96,17 @@ def main():
     # Check path exists
     if args.command == 'scan':
         if args.target_lang is None:
-            do_rescan(path)
+            scan_path(path, module=args.module)
         else:
-            do_rescan(path, [args.target_lang])
+            scan_path(path, module=args.module, languages=[args.target_lang])
     elif args.command == 'compile':
-        do_compile(path)
+        compile_path(path)
     elif args.command == 'translate':
-        translate(path, target_lang=args.target_lang,
-                  source_lang=args.source_lang)
+        translate_path(path, target_lang=args.target_lang,
+                       source_lang=args.source_lang, module=args.module)
 
     sys.stdout.write('\n')
+
+
+if __name__ == '__main__':
+    main()

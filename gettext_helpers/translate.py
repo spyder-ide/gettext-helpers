@@ -58,14 +58,15 @@ def clean_lang_for_google(lang):
     return lang
 
 
-def translate(path, target_lang, source_lang='en'):
+def translate_path(path, target_lang, source_lang='en', module=None):
     """Read all untranslated and fuzzy entries and translate them."""
     google_target_lang = clean_lang_for_google(target_lang)
     google_source_lang = clean_lang_for_google(source_lang)
 
-    modname = osp.basename(path)
+    if module is None:
+        module = osp.basename(path)
     pofile = osp.join(path, 'locale', target_lang, 'LC_MESSAGES',
-                      modname + '.po')
+                      module + '.po')
 
     if osp.isfile(pofile):
         print(pofile)

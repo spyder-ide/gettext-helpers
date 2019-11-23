@@ -26,8 +26,8 @@
 
 
 # Local imports
-from gettext_helpers.gettext_helpers import do_rescan
+from gettext_helpers.utils import scan_path
 
 
-if __name__ == "__main__":
-    do_rescan("spyder")
+if __name__ == '__main__':
+    scan_path('spyder')
