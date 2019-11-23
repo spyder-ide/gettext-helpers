@@ -64,8 +64,16 @@ spyder-gettext scan <PATH_TO_ROOT_MODULE> --target-lang es
 
 ### To translate untranslated strings:
 
+This uses selenium, the firefox webdriver and google translate
+
 ```bash
 spyder-gettext translate <PATH_TO_ROOT_MODULE> --target-lang es
+```
+
+### To compile translated files:
+
+```bash
+spyder-gettext compile <PATH_TO_ROOT_MODULE> --target-lang es
 ```
 
 ## Contributing
