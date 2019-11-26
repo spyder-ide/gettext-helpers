@@ -58,7 +58,7 @@ def clean_lang_for_google(lang):
 
 def get_driver():
     """Search for available webdriver."""
-    e = None
+    driver = None
     try:
         from selenium.webdriver.firefox.options import Options
         options = Options()
@@ -75,7 +75,7 @@ def get_driver():
         except Exception as e:
             return None
 
-    if e:
+    if driver is None:
         print('Webdriver not found!')
         print(e)
 
@@ -101,6 +101,10 @@ def translate_path(path, target_lang, source_lang='en', module=None):
         texts = po.untranslated_entries() + po.fuzzy_entries()
         template = '/{}) Translating: '.format(len(texts))
         driver = get_driver()
+
+        if driver is None:
+            return
+
         for idx, entry in enumerate(texts):
             text = entry.msgid
             print('({}'.format(idx + 1) + template + repr(text))
