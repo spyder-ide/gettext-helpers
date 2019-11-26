@@ -34,7 +34,6 @@ import time
 # Third party imports
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.firefox.options import Options
 import polib
 
 # Vars
@@ -82,6 +81,9 @@ def translate_path(path, target_lang, source_lang='en', module=None):
             try:
                 trans, driver = translate_string(text, google_target_lang,
                                                  google_source_lang, driver)
+                if trans is None and driver is None:
+                    print('No webdriver found!')
+                    return
             except Exception:
                 trans = ''
             entry.msgstr = trans
@@ -103,9 +105,19 @@ def translate_string(text, target_lang, source_lang='en', driver=None):
     """Use google translate vie web driver to translate text."""
     global _drivers
     if driver is None:
-        options = Options()
-        options.headless = True
-        driver = webdriver.Firefox(options=options)
+        try:
+            from selenium.webdriver.firefox.options import Options
+            options = Options()
+            options.headless = True
+            driver = webdriver.Firefox(options=options)
+        except Exception:
+            try:
+                from selenium.webdriver.chrome.options import Options
+                chrome_options = Options()
+                chrome_options.add_argument("--headless")
+                driver = webdriver.Chrome(chrome_options=chrome_options)
+            except Exception:
+                return None, None
         _drivers.add(driver)
 
     url = _base_url.format(

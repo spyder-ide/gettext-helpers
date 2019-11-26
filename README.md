@@ -30,7 +30,7 @@ Currently, you can just ``git clone`` the repository and call the scripts and
 functions locally on your project of choice, though you may want to put it on
 your ``PATH``/``PYTHONPATH`` first.
 
-You will also need to install the Firefox selenium driver!
+You will also need to install Firefox or Chrome to use as webdriver!
 
 ### With pip
 

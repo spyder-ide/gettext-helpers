@@ -39,6 +39,8 @@ _EXT = '.exe' if os.name == 'nt' else ''
 PYGETTEXT_EXEC = 'pygettext' + _EXT
 MSGFMT_EXEC = 'msgfmt' + _EXT
 MSGMERGE_EXEC = 'msgmerge'
+
+# Constants
 LC_MESSAGES = 'LC_MESSAGES'
 MO_EXT = '.mo'
 PO_EXT = '.po'
@@ -46,7 +48,7 @@ POT_EXT = '.pot'
 
 
 def _get_locale_path(path):
-    """Retunr locale full path based on path."""
+    """Return locale full path based on path."""
     return osp.join(path, 'locale')
 
 
@@ -143,7 +145,7 @@ def scan_files(files, path, module=None, languages=None):
 def compile_path(path, module=None):
     """Compile '.po' files to '.mo' files."""
     if module is None:
-        module = osp.dirname(path)
+        module = osp.basename(path)
 
     locale_path = _get_locale_path(path)
     for lang in get_languages(path):
@@ -159,5 +161,6 @@ def compile_path(path, module=None):
         ]
         try:
             subprocess.call(cmd)
+            print('Compiling po file "{}"\n'.format(mofilepath))
         except Exception as e:
             print(e)
