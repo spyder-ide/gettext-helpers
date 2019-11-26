@@ -59,25 +59,26 @@ def clean_lang_for_google(lang):
 def get_driver():
     """Search for available webdriver."""
     driver = None
+    error = None
     try:
         from selenium.webdriver.firefox.options import Options
         options = Options()
         options.headless = True
         driver = webdriver.Firefox(options=options)
         print('Using Firefox webdriver:')
-    except Exception as e:
+    except Exception as error:
         try:
             from selenium.webdriver.chrome.options import Options
             chrome_options = Options()
             chrome_options.add_argument("--headless")
             driver = webdriver.Chrome(chrome_options=chrome_options)
             print('Using Chrome webdriver:')
-        except Exception as e:
+        except Exception as error:
             pass
 
     if driver is None:
         print('Webdriver not found!')
-        print(e)
+        print(error)
 
     return driver
 
