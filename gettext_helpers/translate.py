@@ -73,7 +73,7 @@ def get_driver():
             driver = webdriver.Chrome(chrome_options=chrome_options)
             print('Using Chrome webdriver:')
         except Exception as e:
-            return None
+            pass
 
     if driver is None:
         print('Webdriver not found!')
