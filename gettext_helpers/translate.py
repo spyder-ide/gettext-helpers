@@ -43,7 +43,6 @@ _base_url = (
     '&sl={source_language}'
     '&tl={target_language}'
     '&text={text}')
-_drivers = set()
 
 
 def clean_lang_for_google(lang):
@@ -57,6 +56,32 @@ def clean_lang_for_google(lang):
     return lang
 
 
+def get_driver():
+    """Search for available webdriver."""
+    e = None
+    try:
+        from selenium.webdriver.firefox.options import Options
+        options = Options()
+        options.headless = True
+        driver = webdriver.Firefox(options=options)
+        print('Using Firefox webdriver:')
+    except Exception as e:
+        try:
+            from selenium.webdriver.chrome.options import Options
+            chrome_options = Options()
+            chrome_options.add_argument("--headless")
+            driver = webdriver.Chrome(chrome_options=chrome_options)
+            print('Using Chrome webdriver:')
+        except Exception as e:
+            return None
+
+    if e:
+        print('Webdriver not found!')
+        print(e)
+
+    return driver
+
+
 def translate_path(path, target_lang, source_lang='en', module=None):
     """Read all untranslated and fuzzy entries and translate them."""
     google_target_lang = clean_lang_for_google(target_lang)
@@ -68,23 +93,22 @@ def translate_path(path, target_lang, source_lang='en', module=None):
                       module + '.po')
 
     if osp.isfile(pofile):
+        print('Transalting file:')
         print(pofile)
 
         # Use polib to get all untranslated strings
         po = polib.pofile(pofile)
-        driver = None
         texts = po.untranslated_entries() + po.fuzzy_entries()
         template = '/{}) Translating: '.format(len(texts))
+        driver = get_driver()
         for idx, entry in enumerate(texts):
             text = entry.msgid
             print('({}'.format(idx + 1) + template + repr(text))
             try:
-                trans, driver = translate_string(text, google_target_lang,
-                                                 google_source_lang, driver)
-                if trans is None and driver is None:
-                    print('No webdriver found!')
-                    return
-            except Exception:
+                trans = translate_string(driver, text, google_target_lang,
+                                         google_source_lang)
+            except Exception as e:
+                print(e)
                 trans = ''
             entry.msgstr = trans
 
@@ -92,34 +116,16 @@ def translate_path(path, target_lang, source_lang='en', module=None):
             # process stops.
             po.save(pofile)
 
-        for driver in _drivers:
-            try:
-                driver.close()
-            except Exception:
-                pass
+        try:
+            driver.close()
+        except Exception:
+            pass
     else:
         print('"{}" file not found!'.format(pofile))
 
 
-def translate_string(text, target_lang, source_lang='en', driver=None):
+def translate_string(driver, text, target_lang, source_lang='en'):
     """Use google translate vie web driver to translate text."""
-    global _drivers
-    if driver is None:
-        try:
-            from selenium.webdriver.firefox.options import Options
-            options = Options()
-            options.headless = True
-            driver = webdriver.Firefox(options=options)
-        except Exception:
-            try:
-                from selenium.webdriver.chrome.options import Options
-                chrome_options = Options()
-                chrome_options.add_argument("--headless")
-                driver = webdriver.Chrome(chrome_options=chrome_options)
-            except Exception:
-                return None, None
-        _drivers.add(driver)
-
     url = _base_url.format(
         source_language=source_lang,
         target_language=target_lang,
@@ -129,4 +135,4 @@ def translate_string(text, target_lang, source_lang='en', driver=None):
     time.sleep(1)
     elem = driver.find_element_by_class_name("translation")
     trans_text = elem.text or ''
-    return trans_text, driver
+    return trans_text
