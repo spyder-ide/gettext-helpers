@@ -76,9 +76,9 @@ spyder-gettext translate <PATH_TO_ROOT_MODULE> --target-lang es
 spyder-gettext compile <PATH_TO_ROOT_MODULE> --target-lang es
 ```
 
-### To create Crwodin configuration:
+### To create Crowdin configuration:
 ```sh
-spyder-gettext compile <PATH_TO_ROOT_MODULE> --target-lang es --crowdin
+spyder-gettext scan <PATH_TO_ROOT_MODULE> --crowdin
 ```
 
 ## Contributing
