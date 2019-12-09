@@ -29,10 +29,13 @@
 from __future__ import print_function, unicode_literals
 
 # Standard library imports
-import sys
 import os
 import os.path as osp
 import subprocess
+import sys
+
+# Third party imports
+import polib
 
 # Adjust bundled executables (See: vendor)
 _EXT = '.exe' if os.name == 'nt' else ''
@@ -71,6 +74,30 @@ def get_languages(path):
     return dirnames
 
 
+def normalize_string_paths(path, popath):
+    """
+    Remove any hardcoded paths in the pot file.
+
+    This will also normalize to use unix path separators.
+    """
+    # Convert absolute paths to relative paths
+    pot = polib.pofile(popath)
+    remove_path = os.path.dirname(path) + os.sep
+    for entry in pot:
+        new_occurrences = []
+        for (string_fpath, line) in entry.occurrences:
+            string_fpath = string_fpath.replace(remove_path, '')
+
+            # Normalize paths
+            string_fpath = string_fpath.replace('\\', '/')
+
+            new_occurrences.append((string_fpath, line))
+
+        entry.occurrences = new_occurrences
+
+    pot.save(popath)
+
+
 def scan_path(path, module=None, languages=None):
     """Scan path for translations and generate '*.pot' and '*.po' files."""
     files = get_files(path)
@@ -88,6 +115,7 @@ def scan_files(files, path, module=None, languages=None):
         module = osp.basename(path)
 
     potfile = module + POT_EXT
+    rel_locale_path = locale_path.replace(os.getcwd(), '')[1:]
     subprocess.call(
         [
             PYGETTEXT_EXEC,
@@ -95,10 +123,11 @@ def scan_files(files, path, module=None, languages=None):
             potfile,  # Name of .pot file
             # '-D',   # Extract docstrings
             '-p',
-            locale_path,  # Destination
+            rel_locale_path,  # Destination
         ] + files
     )
     potpath = osp.join(locale_path, potfile)
+    normalize_string_paths(path, potpath)
     print('Updating pot file: "{}"\n'.format(potpath))
 
     if languages is None:
@@ -123,8 +152,6 @@ def scan_files(files, path, module=None, languages=None):
             with open(pofilepath, 'w') as fh:
                 fh.write('# -*- coding: utf-8 -*-\n')
                 data = data.replace('charset=CHARSET', 'charset=utf-8')
-                data = data.replace('Content-Transfer-Encoding: ENCODING',
-                                    'Content-Transfer-Encoding: utf-8')
                 fh.write(data)
         else:
             print('Merge...')
@@ -140,6 +167,8 @@ def scan_files(files, path, module=None, languages=None):
                 )
             except Exception as e:
                 print(e)
+
+        normalize_string_paths(path, pofilepath)
 
 
 def compile_path(path, module=None):

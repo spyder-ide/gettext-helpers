@@ -34,13 +34,13 @@ You will also need to install Firefox or Chrome to use as webdriver!
 
 ### With pip
 
-```bash
+```sh
 pip install selenium polib
 python setup.py develop
 ```
 
 ### With conda
-```bash
+```sh
 conda install selenium polib -c spyder-ide
 python setup.py develop
 ```
@@ -52,13 +52,13 @@ Go to the root of the repository you want to update:
 
 ### To scan files and generate a *.pot file:
 
-```bash
+```sh
 spyder-gettext scan <PATH_TO_ROOT_MODULE>
 ```
 
 ### To create or update new language stubs:
 
-```bash
+```sh
 spyder-gettext scan <PATH_TO_ROOT_MODULE> --target-lang es
 ```
 
@@ -66,14 +66,19 @@ spyder-gettext scan <PATH_TO_ROOT_MODULE> --target-lang es
 
 This uses selenium, the firefox webdriver and google translate
 
-```bash
+```sh
 spyder-gettext translate <PATH_TO_ROOT_MODULE> --target-lang es
 ```
 
 ### To compile translated files:
 
-```bash
+```sh
 spyder-gettext compile <PATH_TO_ROOT_MODULE> --target-lang es
+```
+
+### To create Crwodin configuration:
+```sh
+spyder-gettext compile <PATH_TO_ROOT_MODULE> --target-lang es --crowdin
 ```
 
 ## Contributing

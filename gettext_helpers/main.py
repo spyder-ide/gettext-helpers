@@ -31,6 +31,7 @@ import sys
 
 # Local imports
 from .constants import LANG_CODES
+from .crowdin import create_crowdin_base_config
 from .translate import translate_path
 from .utils import compile_path, scan_path
 
@@ -71,6 +72,12 @@ def main():
         help='Target language code',
         default=None
     )
+    parser.add_argument(
+        '-c',
+        '--crowdin',
+        action="store_true",
+        help="Create default Crowdin configuration",
+    )
     sys.stdout.write('\n')
     args = parser.parse_args()
 
@@ -104,6 +111,11 @@ def main():
     elif args.command == 'translate':
         translate_path(path, target_lang=args.target_lang,
                        source_lang=args.source_lang, module=args.module)
+
+    if args.crowdin:
+        crowdin_fpath = create_crowdin_base_config(path, module=args.module)
+        print('\nCreatig Crowdin base configuration: "{}"'
+              '\n'.format(crowdin_fpath))
 
     sys.stdout.write('\n')
 
