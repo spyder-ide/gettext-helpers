@@ -99,6 +99,9 @@ def main():
         return
 
     path = os.path.abspath(args.path)
+    if not os.path.isdir(path):
+        print('Path not found!\n')
+        return
 
     # Check path exists
     if args.command == 'scan':
