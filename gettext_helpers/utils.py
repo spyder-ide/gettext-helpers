@@ -85,13 +85,21 @@ def normalize_string_paths(path, popath):
     remove_path = os.path.dirname(path) + os.sep
     for entry in pot:
         new_occurrences = []
+        string_fpaths = []
+        lines = []
         for (string_fpath, line) in entry.occurrences:
-            string_fpath = string_fpath.replace(remove_path, '')
+            string_fpaths.append(string_fpath)
+            lines.append(line)
 
-            # Normalize paths
-            string_fpath = string_fpath.replace('\\', '/')
+            if line != '':
+                string_fpath = ' '.join(string_fpaths).replace(remove_path, '')
 
-            new_occurrences.append((string_fpath, line))
+                # Normalize paths
+                string_fpath = string_fpath.replace('\\', '/')
+
+                new_occurrences.append((string_fpath, line))
+                string_fpaths = []
+                lines = []
 
         entry.occurrences = new_occurrences
 
