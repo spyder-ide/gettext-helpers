@@ -81,7 +81,8 @@ def normalize_string_paths(path, popath):
     This will also normalize to use unix path separators.
     """
     # Convert absolute paths to relative paths
-    pot = polib.pofile(popath)
+    # Do not add column wrapping by using a large value!
+    pot = polib.pofile(popath, wrapwidth=10000)
     remove_path = os.path.dirname(path) + os.sep
     for entry in pot:
         new_occurrences = []

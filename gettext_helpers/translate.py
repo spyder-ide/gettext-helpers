@@ -98,7 +98,8 @@ def translate_path(path, target_lang, source_lang='en', module=None):
         print(pofile)
 
         # Use polib to get all untranslated strings
-        po = polib.pofile(pofile)
+        # Do not add column wrapping by using a large value!
+        po = polib.pofile(pofile, wrapwidth=10000)
         texts = po.untranslated_entries() + po.fuzzy_entries()
         template = '/{}) Translating: '.format(len(texts))
         driver = get_driver()
