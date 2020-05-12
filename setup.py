@@ -81,7 +81,7 @@ setup(
             'msgfmt = gettext_helpers.vendor.msgfmt:main',
         ],
     },
-    requirements=['polib', 'selenium'],
+    install_requires=['polib', 'selenium'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
