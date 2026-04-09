@@ -55,7 +55,7 @@ def _get_locale_path(path):
     return osp.join(path, 'locale')
 
 
-def get_files(path, extensions=('.py', '.pyw'), exclude_pattern="test*"):
+def get_files(path, extensions=('.py', '.pyw'), exclude_pattern=None):
     """Get all files in path ending in extension."""
     fpaths = []
     for dirname, dirnames, filenames in os.walk(path):
@@ -110,9 +110,9 @@ def normalize_string_paths(path, popath):
     pot.save(popath)
 
 
-def scan_path(path, module=None, languages=None):
+def scan_path(path, module=None, languages=None, exclude_pattern=None):
     """Scan path for translations and generate '*.pot' and '*.po' files."""
-    files = get_files(path)
+    files = get_files(path, exclude_pattern=exclude_pattern)
     scan_files(files, path, module=module, languages=languages)
 
 

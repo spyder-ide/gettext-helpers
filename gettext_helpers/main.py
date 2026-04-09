@@ -78,6 +78,16 @@ def main():
         action="store_true",
         help="Create default Crowdin configuration",
     )
+    parser.add_argument(
+        '-ep',
+        '--exclude-pattern',
+        type=str,
+        help=(
+            "Glob pattern to use to exclude directories when running "
+            "the scan command"
+        ),
+        default="test*",
+    )
     sys.stdout.write('\n')
     args = parser.parse_args()
 
@@ -106,9 +116,16 @@ def main():
     # Check path exists
     if args.command == 'scan':
         if args.target_lang is None:
-            scan_path(path, module=args.module)
+            scan_path(
+                path, module=args.module, exclude_pattern=args.exclude_pattern
+            )
         else:
-            scan_path(path, module=args.module, languages=[args.target_lang])
+            scan_path(
+                path,
+                module=args.module,
+                languages=[args.target_lang],
+                exclude_pattern=args.exclude_pattern,
+            )
     elif args.command == 'compile':
         compile_path(path)
     elif args.command == 'translate':
