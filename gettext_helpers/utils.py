@@ -29,10 +29,10 @@
 from __future__ import print_function, unicode_literals
 
 # Standard library imports
+import fnmatch
 import os
 import os.path as osp
 import subprocess
-import sys
 
 # Third party imports
 import polib
@@ -55,10 +55,13 @@ def _get_locale_path(path):
     return osp.join(path, 'locale')
 
 
-def get_files(path, extensions=('.py', '.pyw')):
+def get_files(path, extensions=('.py', '.pyw'), exclude_pattern="test*"):
     """Get all files in path ending in extension."""
     fpaths = []
-    for dirname, _dirnames, filenames in os.walk(path):
+    for dirname, dirnames, filenames in os.walk(path):
+        dirnames[:] = [
+            d for d in dirnames if not fnmatch.fnmatch(d, exclude_pattern)
+        ]
         for filename in filenames:
             if filename.endswith(extensions):
                 fpaths.append(osp.join(dirname, filename))
