@@ -59,9 +59,10 @@ def get_files(path, extensions=('.py', '.pyw'), exclude_pattern=None):
     """Get all files in path ending in extension."""
     fpaths = []
     for dirname, dirnames, filenames in os.walk(path):
-        dirnames[:] = [
-            d for d in dirnames if not fnmatch.fnmatch(d, exclude_pattern)
-        ]
+        if exclude_pattern is not None:
+            dirnames[:] = [
+                d for d in dirnames if not fnmatch.fnmatch(d, exclude_pattern)
+            ]
         for filename in filenames:
             if filename.endswith(extensions):
                 fpaths.append(osp.join(dirname, filename))
