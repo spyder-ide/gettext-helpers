@@ -83,8 +83,7 @@ def main():
         '--exclude-pattern',
         type=str,
         help=(
-            "Glob pattern to use to exclude directories when running "
-            "the scan command"
+            "Glob pattern to exclude directories when running the scan command"
         ),
         default="test*",
     )
